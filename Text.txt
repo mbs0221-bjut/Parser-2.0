@@ -1,0 +1,228 @@
+json obj={
+	"people":[
+		{ "firstName":"1","lastName":"sfdvsdfvdsf","email":"aaaa"},
+		{ "firstName":"2","lastName":"dvvdsfvbssdf","email":"false"},
+		{ "firstName":"3","lastName":"dsfbvsdfvbdsb","email":"aaaa"},
+		{ "firstName":"4","lastName":"afb a ad  sfdf","email":"false"},
+		{ "firstName":"5","lastName":"fd  adf","email":"aaaa"},
+		{ "firstName":"6","lastName":"Hunter","email":"false"},
+		{ "firstName":"1","lastName":"sfdvsdfvdsf","email":"aaaa"},
+		{ "firstName":"2","lastName":"dvvdsfvbssdf","email":"false"},
+		{ "firstName":"3","lastName":"dsfbvsdfvbdsb","email":"aaaa"},
+		{ "firstName":"4","lastName":"afb a ad  sfdf","email":"false"},
+		{ "firstName":"5","lastName":"fd  adf","email":"aaaa"},
+		{ "firstName":"6","lastName":"Hunter","email":"false"}
+	]
+}
+
+json obj1 = { "firstName":"asdfcasdfc","lastName":"acADSC","email":"CCADSCASDC"}
+
+int a,b;
+int arr[14]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+
+a=count(arr)
+a=2*3
+b=4*5
+int layer;
+layer=20
+
+function calla
+	begin
+		input int a,b
+		print "calla is called with parameters a=".a."\tb=".b."\n"
+		print "testing if-then-else, do-while and while-do statements...\n"
+
+		a=2*2.5-3*2
+		print "result=".a."\n"
+
+		if a<b then
+			begin
+				print "a=".a."\n"
+				a=a+1
+				print "a+1=".a."\n"
+			end
+		else
+			begin
+				print "b=".b."\n"
+				b=b+1
+				print "b+1=".b."\n"
+			end
+		
+		print "a=".a."\n"
+		
+		while a<b do
+			begin
+				b=b-2
+				print "b=".b."\n"
+			end
+		
+		print "b=".b."\n"
+
+		do
+			begin
+				b=3*b+2
+				print "3*b+2=".b."\n"
+			end
+		while b<100
+		
+		while layer > 0 do
+			begin
+				print "[".layer."]"
+				layer=layer-2
+			end
+		print "layer\n"
+	end
+
+function callb
+	begin
+		input int a,b,i
+		output int c,d,e
+		print "callb is called with parameters a=".a."\tc=".c."\ti=".i."\n"
+		print "testing for, do-while, and case statements...\n"
+
+		c=a+b
+		d=a-b
+
+		i = 0
+
+		print "b=".b."\n"
+		print "d=".d."\n"
+		print "i=".i."\n"
+
+		for i=0;i<10;i=i+1;
+			begin
+				print "<i=".i.">\n"
+			end
+
+		i=0x10010101
+		print "i=".i."\n"
+		c=4
+		do
+			begin
+				case c
+				0x00:c=4
+				0x01:c=0
+				0x02:c=1
+				0x03:c=2
+				0x04:c=3
+				end
+				print "c=".c."\n"
+			end
+		while c>0
+	end
+	
+int i;
+int j;
+function callc
+	begin
+		print "callc is called without parameters\n"
+		print "testing ARRAY dynamic access\n"
+		a = count(arr)/3
+		for a=0;a<count(arr)/2;a=a+1;
+		begin
+			for b=0;b<2;b=b+1;
+				begin
+					print "arr[".a+count(arr)/2*b."]=".arr[a+count(arr)/2*b]."\t"
+				end
+			print "\n"
+		end
+		print "testing for-statement...\n"
+		for i=0;i<10;i=i+1;
+			begin
+				for j=0;j<10;j=j+1;
+					begin
+						print i*j."=".i."*".j."\t"
+					end
+				print "\n"
+			end
+		print "testing JSON dynamic access\n"
+		print "count(obj[\"people\"])=".count(obj["people"])."\n"
+		for b = 0; b < count(obj["people"]); b = b + 1;
+			begin
+				print "obj[".b."]=".obj["people"][b]["lastName"]."\n"
+			end
+		j = count(obj["people"])
+		do
+			begin
+				print "choose a person you like [input [i]]:"
+				cin -i
+				if i>j-1 then
+					print i."is larger than ".j."\n"
+				else if i<0 then
+					print i."is smaller than 0\n"
+				else
+					print "your choose [".i."]:".obj["people"][i]."\n"
+				print "input \'1\' to continue:"
+				cin -i
+			end
+		while i=1
+	end
+
+function add
+	begin
+		input int a,b
+		output int c
+		c = a + b
+	end
+
+function mul
+	begin
+		input int a,b
+		output int c
+		c = a * b
+	end
+
+function div
+	begin
+		input int a,b
+		output int c
+		c = a / b
+	end
+
+print "testing basic statements...\n"
+a = 10
+print "a=".a."\n"
+b = 5
+print "b=".b."\n"
+a = a + b
+print "a+b=".a."\n"
+print "1+3=".(1+3)."\n"
+print "5+3=".(5+3)."\n"
+print "5-3=".(5-3)."\n"
+print "5*3=".(5*3)."\n"
+print "5/3=".(5/3)."\n"
+print "5%3=".(5%3)."\n"
+print "5.6+3.4=".(5.6+3.4)."\n"
+print "6.6-4.4=".(6.6-4.4)."\n"	
+print "7.6*5.4=".(7.6*5.4)."\n"
+a = 5
+b = 8
+print "a=".a." b=".b."\n"
+add(5 8)
+print "add(5 8)=".add[0]."\n"
+a = add[0]
+print "a=".a."\n"
+add(5 6)
+print "add(5 6)=".add[0]."\n"
+a = add[0]
+print "a=".a."\n"
+add(5 4)
+print "add(5 4)=".add[0]."\n"
+a = add[0]
+print "a=".a."\n"
+calla(1 2)
+callb(1 2 3)
+
+
+int state;
+state = 0x0000
+
+callc()
+
+print "input [-a][-b]:\n"
+cin -a-b
+print "your input:a=".a."\tb=".b."\n"
+print "press any key to end\n"
+cin -a
+
+#
