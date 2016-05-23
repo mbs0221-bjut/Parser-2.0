@@ -13,7 +13,7 @@
 
 using namespace std;
 
-//宏定义种别码
+
 enum Tag{
 	IF = 256, THEN, ELSE, DO, WHILE, FOR, CASE, PRINT, BASIC,
 	ID, NUM, REAL, STRING, COUNT, CIN, ARRAY, INDEX,
@@ -22,17 +22,18 @@ enum Tag{
 	INC, DEC, SHL, SHR, TEMP
 };
 
-//二元组
+// Token
 struct Token{
-	int Tag;		//种别码
+	int Tag;
 	Token(){
 		Tag = NULL;
 	}
 	Token(int Tag) :Tag(Tag){  }
 };
 
+// Word
 struct Word :Token{
-	string word;	//字符
+	string word;
 	static Word *Temp;
 	Word(){
 		this->Tag = NULL;
@@ -48,6 +49,7 @@ struct Word :Token{
 
 Word *Word::Temp = new Word(TEMP, "TEMP");
 
+// Type
 struct Type :Word{
 	int width;
 	static Type *Int, *Char, *Double, *Float, *Bool;
@@ -62,12 +64,15 @@ struct Type :Word{
 	}
 };
 
+Type *Type::Char = new Type(INT, "char", 1);
+Type *Type::Bool = new Type(INT, "bool", 1);
 Type *Type::Int = new Type(INT, "int", 4);
+Type *Type::Float = new Type(INT, "float", 8);
 Type *Type::Double = new Type(DOUBLE, "double", 16);
 
-// 整数
+// Integer type
 struct Integer :Type{
-	int value;		//数字
+	int value;
 	static Integer *True, *False;
 	Integer() : value(-1){ Tag = NUM; width = 4; }
 	Integer(int val) : value(val){ Tag = NUM; width = 4; }
@@ -82,7 +87,7 @@ struct Integer :Type{
 Integer *Integer::True = new Integer(1);
 Integer *Integer::False = new Integer(0);
 
-// 小数
+// Double type
 struct Double :Type{
 	double value;
 	Double(double value) : value(value){ Tag = REAL; width = 16; }
@@ -102,6 +107,7 @@ struct String :Type{
 	}
 };
 
+// Array
 struct Array :Type{
 	int size;
 	Type *value;
@@ -184,7 +190,7 @@ struct JSONObject :JSONValue{
 				return (*it)->node;
 			}
 		}
-		printf("no attr named %s.\n", name.c_str());
+		printf("no attrbute named %s.\n", name.c_str());
 		return JSONValue::Null;
 	}
 	virtual JSONObject *eval(){
@@ -236,6 +242,7 @@ struct JSONArray :JSONValue{
 	}
 };
 
+// JSON type
 struct Json :Type{
 	string name;
 	Type* node;
@@ -248,12 +255,11 @@ struct Json :Type{
 	}
 };
 
-// 词法分析器
 class Lexer{
 private:
 	char peek;
 	map<string, Word*> words;
-	ifstream inf;// 文件输入流
+	ifstream inf;
 	bool read(char c){
 		char a;
 		inf.read(&a, sizeof(char));
@@ -263,8 +269,12 @@ public:
 	int column = 1;
 	int line = 1;
 	Lexer(){
-		words["int"] = Type::Int;// new Word(INT, "int");
-		words["double"] = Type::Double;// new Word(INT, "int");
+		// All of the keywords
+		words["char"] = Type::Char;
+		words["bool"] = Type::Bool;
+		words["int"] = Type::Int;
+		words["double"] = Type::Double;
+		words["float"] = Type::Float;
 		words["if"] = new Word(IF, "if");
 		words["then"] = new Word(THEN, "then");
 		words["else"] = new Word(ELSE, "else");
@@ -298,7 +308,7 @@ public:
 		}
 		return false;
 	}
-	Token *scan(){//LL(1)
+	Token *scan(){
 		if (inf.eof()){
 			return new Token(EOF);
 		}
@@ -309,19 +319,19 @@ public:
 			else if (peek == '/'){
 				Token *t;
 				if (t = skip_comment()){
-					return t;
+					return t;// '/'
 				}
 			}
 			else break;
 		}
-		if (peek == '"'){// "THIS IS A TEST"
+		if (peek == '"'){
 			return match_string();
 		}
 		if (peek == '\''){
 			return match_char();
 		}
-		if (isalpha(peek) || peek == '_'){// 
-			return match_id();//a _
+		if (isalpha(peek) || peek == '_'){ 
+			return match_id();
 		}
 		if (isdigit(peek)){
 			if (peek == '0'){
@@ -332,7 +342,7 @@ public:
 				else if (isdigit(peek) && peek >= '1'&&peek <= '7'){
 					return match_oct();
 				}
-				inf.seekg(-1, ios_base::cur);// adsa+...
+				inf.seekg(-1, ios_base::cur);
 				return new Integer(0);
 			}
 			else{
@@ -340,13 +350,13 @@ public:
 			}
 		}
 		return match_other();
-	}// a, b, c, int;
+	}
 	Token *match_string(){
 		string str;
-		inf.read(&peek, 1);//
+		inf.read(&peek, 1);
 		while (peek != '"'){
 			if (peek == '\\'){
-				inf.read(&peek, 1);// "\""
+				inf.read(&peek, 1);
 				switch (peek){
 				case 'a':str.push_back('\a'); break;
 				case 'b':str.push_back('\b'); break;
@@ -371,9 +381,9 @@ public:
 		return new Word(STRING, str);
 	}
 	Token *match_char(){
-		char c; // '
+		char c; 
 		inf.read(&peek, 1);
-		if (peek == '\\'){// '\a
+		if (peek == '\\'){
 			inf.read(&peek, 1);
 			switch (peek){
 			case 'a':c = '\a'; break;
@@ -390,7 +400,7 @@ public:
 			case '0':c = '\0'; break;
 			default:c = '\\'; c = peek; break;
 			}
-			inf.read(&peek, 1);// '\a'
+			inf.read(&peek, 1);
 		}else{
 			c = peek;
 		}
@@ -402,23 +412,23 @@ public:
 			str.push_back(peek);
 			inf.read(&peek, 1);
 		}
-		inf.seekg(-1, ios_base::cur);// adsa+...
+		inf.seekg(-1, ios_base::cur);
 		map<string, Word*>::iterator iter;
 		iter = words.find(str);
 		if (iter == words.end()){
-			return new Word(ID, str);// a1211
+			return new Word(ID, str);
 		}
 		else{
-			return (*iter).second;// 
+			return (*iter).second;
 		}
 	}
 	Token *match_number(){
 		int ivalue = 0;
 		while (isdigit(peek)){
-			ivalue = 10 * ivalue + peek - '0';// 123e-3
+			ivalue = 10 * ivalue + peek - '0';
 			inf.read(&peek, 1);
 		}
-		if (peek == 'e' || peek == 'E'){// 123e3
+		if (peek == 'e' || peek == 'E'){
 			double dvalue = ivalue;
 			int positive = 1;
 			int index = 0;
@@ -446,7 +456,7 @@ public:
 			}
 			return new Double(dvalue);
 		}
-		if (peek == '.'){// 23.89
+		if (peek == '.'){
 			double dvalue = ivalue;
 			double power = 1;
 			inf.read(&peek, 1);
@@ -499,7 +509,7 @@ public:
 					inf.read(&peek, 1);
 					if (peek == '\n')line++;
 					if (peek == '*'){
-						inf.read(&peek, 1);/**/
+						inf.read(&peek, 1);
 						if (peek == '\n')line++;
 						if (peek == '/')break;
 					}
@@ -531,7 +541,7 @@ public:
 				num = 16 * num + 10 + tolower(peek) - 'a';
 			}
 			else{
-				inf.seekg(-1, ios_base::cur);// adsa+...
+				inf.seekg(-1, ios_base::cur);
 				return new Integer(num);
 			}
 		} while (true);
@@ -546,14 +556,14 @@ public:
 					num = 8 * num + peek - '0';
 				}
 				else{
-					inf.seekg(-1, ios_base::cur);// adsa+...
+					inf.seekg(-1, ios_base::cur);
 					return new Integer(num);
 				}
 				inf.read(&peek, 1);
 			} while (true);
 		}
 		else{
-			inf.seekg(-1, ios_base::cur);// adsa+...
+			inf.seekg(-1, ios_base::cur);
 			return new Integer(num);
 		}
 	}
