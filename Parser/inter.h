@@ -16,9 +16,10 @@ int Expr::nlabel = 0;
 
 // ID
 struct Id :Expr{
-	Id(Word *word, Type *type) :Expr(word, type){  }
+	Type *value;
+	Id(Word *word, Type *type, Type *value) :Expr(word, type), value(value){}
 	virtual Type *eval(){
-		return type;
+		return value;
 	}
 };
 
@@ -38,7 +39,7 @@ struct Arith :Expr{
 	Arith(Token *opt, Expr *e1, Expr *e2) :Expr(opt, Type::max(e1->type, e2->type)), E1(e1), E2(e2){  }
 	virtual Type *eval(){
 		Type *result;
-		if (type->Tag == NUM || type->Tag == INT){
+		if (type == Type::Int){
 			Integer *a = (Integer*)E1->eval();
 			Integer *b = (Integer*)E2->eval();
 			switch (opt->Tag){
@@ -54,8 +55,7 @@ struct Arith :Expr{
 			default:result = Integer::False; printf("unsupported int option '%c'\n", opt->Tag); break;
 			}
 			result->eval();
-		}
-		else if (type->Tag == REAL || type->Tag == DOUBLE){
+		}else if (type == Type::Double){
 			Double *a = (Double*)E1->eval();
 			Double *b = (Double*)E2->eval();
 			switch (opt->Tag){

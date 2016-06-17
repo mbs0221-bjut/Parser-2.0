@@ -156,7 +156,7 @@ private:
 				}
 			}
 			else{
-				putid(new Id((Word*)token, Integer::False));
+				putid(new Id((Word*)token, Type::Int, Integer::True));
 			}
 			if(look->Tag == ',')match(',');
 		}
